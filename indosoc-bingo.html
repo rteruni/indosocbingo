@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IndoSoc Welcome Event Bingo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,600&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FBF4E4;
+    --cream-dim: #F3E9D2;
+    --forest: #1E4336;
+    --forest-deep: #122A22;
+    --red: #C2362E;
+    --gold: #D79A3B;
+    --line: rgba(30,67,54,0.16);
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--cream);
+    color: var(--forest-deep);
+    font-family: 'Karla', sans-serif;
+  }
+  body {
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(194,54,46,0.08), transparent 42%),
+      radial-gradient(circle at 95% 100%, rgba(30,67,54,0.09), transparent 45%);
+    padding: 1.6rem 0.65rem 2.5rem;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  @media (min-width: 420px) {
+    body { padding: 2rem 1.1rem 3rem; }
+  }
+
+  header { text-align: center; margin-bottom: 1.4rem; }
+  .eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--red);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: clamp(2rem, 9vw, 2.6rem);
+    line-height: 1.03;
+    margin: 0 0 0.5rem;
+    color: var(--forest);
+  }
+  .sub {
+    font-size: 0.95rem;
+    color: rgba(18,42,34,0.7);
+    max-width: 28em;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .board-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.6rem 0 0.8rem;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .progress {
+    font-size: 0.85rem;
+    color: var(--forest);
+    font-weight: 700;
+  }
+  button {
+    font-family: 'Karla', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--forest);
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    min-height: 44px;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:active { transform: scale(0.97); }
+  button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+  .board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: minmax(74px, auto);
+    gap: 4px;
+    background: var(--forest);
+    border-radius: 14px;
+    padding: 4px;
+  }
+  .cell {
+    background: var(--cream);
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.28rem 0.2rem;
+    gap: 0.2rem;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.12s ease, color 0.12s ease;
+    position: relative;
+  }
+  .cell .prompt {
+    font-size: clamp(0.56rem, 2.35vw, 0.7rem);
+    line-height: 1.16;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    color: var(--forest-deep);
+  }
+  .cell .name {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(0.66rem, 2.7vw, 0.85rem);
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+    color: var(--cream);
+  }
+  .cell.marked {
+    background: var(--red);
+  }
+  .cell.marked .prompt {
+    color: rgba(251,244,228,0.75);
+    font-size: clamp(0.46rem, 1.9vw, 0.56rem);
+  }
+  .cell.win { box-shadow: 0 0 0 2px var(--gold) inset; }
+  .cell input {
+    width: 94%;
+    font-family: 'Karla', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid var(--gold);
+    background: transparent;
+    color: var(--forest-deep);
+    padding: 0.2rem 0;
+  }
+  .cell.editing .prompt { opacity: 0.6; }
+  .cell input:focus { outline: none; }
+
+  .status {
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--red);
+    min-height: 1.6em;
+    margin-top: 0.8rem;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: rgba(18,42,34,0.45);
+    margin-top: 2rem;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">LSE INDONESIAN SOCIETY</div>
+    <h1>Welcome Event Bingo</h1>
+    <p class="sub">Find someone who matches each square and mark it off. Get a full line — row, column, or diagonal — and shout bingo!</p>
+  </header>
+
+  <div class="board-head">
+    <div class="progress" id="progress">0 / 25 marked</div>
+    <button id="shuffleBtn">Clear names</button>
+  </div>
+
+  <div class="board" id="board"></div>
+  <div class="status" id="status"></div>
+
+  <footer>Your card is yours alone — saved only on this phone, nothing is shared.</footer>
+</div>
+
+<script>
+(function () {
+  const ITEMS = [
+    "Is from Jakarta",
+    "Studying MPA!",
+    "First year undergraduate",
+    "Shares a class with someone else in this event",
+    "Brought sambal to London",
+    "Tried warung nusantara",
+    "Can cook an Indonesian dish",
+    "Has not gone back to Indonesia in 2026",
+    "Is a scholarship awardee",
+    "Second year undergraduate",
+    "Has taken the wrong train on the London underground",
+    "Brought Indomie to London",
+    "From the same hometown as you",
+    "Is involved in another society",
+    "Is attending an IndoSoc event for the first time!",
+    "Speaks one or more Indonesian dialects",
+    "Tried Toba Restaurant",
+    "Third year undergraduate",
+    "Is not from Jakarta",
+    "Lives in an LSE Hall of Residence",
+    "Studying a PhD!",
+    "Plays badminton",
+    "Is an IndoSoc committee",
+    "Has never been to a pub",
+    "Has the same favorite Indonesian food as you"
+  ];
+  const GRID = 5;
+  const STORAGE_KEY = "indosoc_bingo_card_v1";
+
+  const boardEl = document.getElementById('board');
+  const statusEl = document.getElementById('status');
+  const progressEl = document.getElementById('progress');
+  const shuffleBtn = document.getElementById('shuffleBtn');
+
+  let cellData = [];
+
+  function newCard() {
+    cellData = ITEMS.map(text => ({ text, name: "" }));
+    save();
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cellData));
+    } catch (e) { /* storage unavailable, ignore */ }
+  }
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length === ITEMS.length && parsed.every(c => c && typeof c.text === 'string' && typeof c.name === 'string')) {
+        cellData = parsed;
+        return true;
+      }
+    } catch (e) { /* ignore corrupt storage */ }
+    return false;
+  }
+
+  function isMarked(cell) {
+    return cell.name.trim().length > 0;
+  }
+
+  function render() {
+    boardEl.innerHTML = '';
+    cellData.forEach((cell, idx) => {
+      const div = document.createElement('div');
+      const marked = isMarked(cell);
+      div.className = 'cell' + (marked ? ' marked' : '');
+      div.setAttribute('role', 'button');
+      div.setAttribute('tabindex', '0');
+      div.setAttribute('aria-pressed', marked ? 'true' : 'false');
+
+      const promptEl = document.createElement('div');
+      promptEl.className = 'prompt';
+      promptEl.textContent = cell.text;
+      div.appendChild(promptEl);
+
+      if (marked) {
+        const nameEl = document.createElement('div');
+        nameEl.className = 'name';
+        nameEl.textContent = cell.name;
+        div.appendChild(nameEl);
+      }
+
+      div.addEventListener('click', () => startEdit(idx));
+      div.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startEdit(idx); }
+      });
+      boardEl.appendChild(div);
+    });
+    const markedCount = cellData.filter(isMarked).length;
+    progressEl.textContent = `${markedCount} / ${ITEMS.length} filled`;
+    checkWin();
+  }
+
+  function startEdit(idx) {
+    const cellEl = boardEl.children[idx];
+    if (!cellEl || cellEl.classList.contains('editing')) return;
+    cellEl.classList.add('editing');
+    cellEl.innerHTML = '';
+
+    const promptEl = document.createElement('div');
+    promptEl.className = 'prompt';
+    promptEl.textContent = cellData[idx].text;
+    cellEl.appendChild(promptEl);
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = cellData[idx].name;
+    input.placeholder = "Who's name?";
+    input.maxLength = 24;
+    input.autocomplete = 'off';
+    input.autocapitalize = 'words';
+    input.setAttribute('autocorrect', 'off');
+    input.setAttribute('enterkeyhint', 'done');
+    cellEl.appendChild(input);
+
+    input.focus();
+    input.select();
+
+    function commit() {
+      cellData[idx].name = input.value.trim();
+      save();
+      render();
+    }
+
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+      if (e.key === 'Escape') { e.preventDefault(); render(); }
+    });
+    input.addEventListener('click', (e) => e.stopPropagation());
+  }
+
+  function getLines() {
+    const lines = [];
+    for (let r = 0; r < GRID; r++) lines.push(Array.from({ length: GRID }, (_, c) => r * GRID + c));
+    for (let c = 0; c < GRID; c++) lines.push(Array.from({ length: GRID }, (_, r) => r * GRID + c));
+    lines.push(Array.from({ length: GRID }, (_, i) => i * GRID + i));
+    lines.push(Array.from({ length: GRID }, (_, i) => i * GRID + (GRID - 1 - i)));
+    return lines;
+  }
+
+  function checkWin() {
+    document.querySelectorAll('.cell.win').forEach(c => c.classList.remove('win'));
+    const lines = getLines();
+    let won = false;
+    lines.forEach(line => {
+      if (line.every(idx => isMarked(cellData[idx]))) {
+        won = true;
+        line.forEach(idx => boardEl.children[idx].classList.add('win'));
+      }
+    });
+    statusEl.textContent = won ? 'Bingo!' : '';
+  }
+
+  shuffleBtn.addEventListener('click', () => {
+    newCard();
+    render();
+  });
+
+  if (!load()) newCard();
+  render();
+})();
+</script>
+</body>
+</html>
